@@ -22,6 +22,9 @@ class Source(Base):
         else:
             target = util.input(self.vim, context, 'Target: ')
 
+        target = target or self.vim.eval(
+            'get(g:, "denite_gitdiff_target", "")')
+        self.vim.command('let g:denite_gitdiff_target = "{}"'.format(target))
         context['__target'] = target
         try:
             git_path = self.vim.eval('fnamemodify(b:git_dir, \':p:h:h\')')

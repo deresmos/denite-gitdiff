@@ -10,8 +10,8 @@ from .base import Base
 class Source(Base):
     def __init__(self, vim):
         super().__init__(vim)
-        self.name = 'diffbranch'
-        self.kind = 'diffbranch'
+        self.name = 'gitdiffbranch'
+        self.kind = 'gitdiffbranch'
 
     def on_init(self, context):
         if context['args']:

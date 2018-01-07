@@ -6,7 +6,7 @@ from .file import Kind
 class Kind(Kind):
     def __init__(self, vim):
         super().__init__(vim)
-        self.name = 'diffbranch'
+        self.name = 'gitdiffbranch'
         self.default_action = 'open'
 
     def _run_gvdiff(self, context, func):

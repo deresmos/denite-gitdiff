@@ -1,7 +1,4 @@
-import glob
-import itertools
 import os
-import subprocess
 
 from git import Repo
 

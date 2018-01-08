@@ -37,13 +37,15 @@ class GitDiffBase(Base):
 
         try:
             git_path = self.vim.eval('b:git_dir')
+            worktree_path = os.path.dirname(git_path)
             head = self.vim.eval('fugitive#head()')
 
             cmd = [
                 'git', '--git-dir={}'.format(git_path),
-                '--work-tree={}'.format(os.path.dirname(git_path))
+                '--work-tree={}'.format(worktree_path)
             ]
 
+            os.chdir(worktree_path)
             self._cmd = cmd
             self.git_path = git_path
             self.git_head = head

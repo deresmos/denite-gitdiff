@@ -39,7 +39,10 @@ class GitDiffBase(Base):
             git_path = self.vim.eval('b:git_dir')
             head = self.vim.eval('fugitive#head()')
 
-            cmd = ['git', '--git-dir={}'.format(git_path)]
+            cmd = [
+                'git', '--git-dir={}'.format(git_path),
+                '--work-tree={}'.format(os.path.dirname(git_path))
+            ]
 
             self._cmd = cmd
             self.git_path = git_path
@@ -80,9 +83,7 @@ class Source(GitDiffBase):
     def on_init(self, context):
         self._on_init_diff(context)
         cmd = self._cmd
-        cmd += [
-            'diff', '--name-status', self.git_head, context['__target']
-        ]
+        cmd += ['diff', '--name-status', self.git_head, context['__target']]
         self._cmd = cmd
 
     def gather_candidates(self, context):

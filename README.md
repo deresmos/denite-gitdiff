@@ -19,7 +19,7 @@ Installation
 
 Usage
 --
-* `diffbranch` Comparing target branch.
+* `gitdiffbranch` Comparing target branch.
 
 
 License

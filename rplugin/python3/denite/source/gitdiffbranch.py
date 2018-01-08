@@ -35,23 +35,19 @@ class GitDiffBase(Base):
         self.vim.command('let g:denite_gitdiff_target = "{}"'.format(target))
         context['__target'] = target
 
-        try:
-            git_path = self.vim.eval('b:git_dir')
-            worktree_path = os.path.dirname(git_path)
-            head = self.vim.eval('fugitive#head()')
+        git_path = self.vim.eval('b:git_dir')
+        worktree_path = os.path.dirname(git_path)
+        head = self.vim.eval('fugitive#head()')
 
-            cmd = [
-                'git', '--git-dir={}'.format(git_path),
-                '--work-tree={}'.format(worktree_path)
-            ]
+        cmd = [
+            'git', '--git-dir={}'.format(git_path),
+            '--work-tree={}'.format(worktree_path)
+        ]
 
-            os.chdir(worktree_path)
-            self._cmd = cmd
-            self.git_path = git_path
-            self.git_head = head
-
-        except Exception as e:
-            raise e
+        os.chdir(worktree_path)
+        self._cmd = cmd
+        self.git_path = git_path
+        self.git_head = head
 
     @staticmethod
     def _run_command(cmd):

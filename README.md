@@ -20,6 +20,7 @@ Installation
 Usage
 --
 * `gitdiffbranch` Comparing target branch.
+* `gitdifflog` Comparing target branch log.
 
 
 License

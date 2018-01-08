@@ -1,6 +1,5 @@
 import os
-
-from git import Repo
+from subprocess import check_output
 
 from denite import util
 
@@ -48,6 +47,10 @@ class GitDiffBase(Base):
 
         except Exception as e:
             raise e
+
+    @staticmethod
+    def _run_command(cmd):
+        return check_output(cmd).decode('utf-8').split('\n')[0:-1]
 
 
 class Source(GitDiffBase):

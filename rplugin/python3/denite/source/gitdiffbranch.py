@@ -96,7 +96,7 @@ class Source(GitDiffBase):
                 context['__target']
             } for diff in self.__git.index.diff(context['__target'])]
 
-        except:
-            candidates = []
+        except Exception as e:
+            raise e
 
         return candidates

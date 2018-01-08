@@ -75,31 +75,24 @@ class Source(GitDiffBase):
         self.kind = 'gitdiffbranch'
 
     def on_init(self, context):
-        try:
-            self._on_init_diff(context)
-            cmd = self._cmd
-            cmd += [
-                'diff', '--name-status', self.git_head, context['__target']
-            ]
-            self._cmd = cmd
-        except:
-            pass
+        self._on_init_diff(context)
+        cmd = self._cmd
+        cmd += [
+            'diff', '--name-status', self.git_head, context['__target']
+        ]
+        self._cmd = cmd
 
     def gather_candidates(self, context):
-        try:
-            res = self._run_command(self._cmd)
-            res = [r.split('\t') for r in res]
+        res = self._run_command(self._cmd)
+        res = [r.split('\t') for r in res]
 
-            type_i = 0
-            path_i = 1
-            candidates = [{
-                'word': r[path_i],
-                'abbr': '{}: {}'.format(r[type_i], r[path_i]),
-                'action__path': os.path.abspath(r[path_i]),
-                'target_branch': context['__target'],
-            } for r in res]
-
-        except Exception as e:
-            raise e
+        type_i = 0
+        path_i = 1
+        candidates = [{
+            'word': r[path_i],
+            'abbr': '{}: {}'.format(r[type_i], r[path_i]),
+            'action__path': os.path.abspath(r[path_i]),
+            'target_branch': context['__target'],
+        } for r in res]
 
         return candidates

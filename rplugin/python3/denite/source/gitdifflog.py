@@ -21,14 +21,14 @@ class Source(GitDiffBase):
         {
             'name': 'gitLogHash',
             'link': 'Number',
-            're': r'\v\w+\|'
+            're': r'\v\w+ \< (\w+| )+\|'
         },
     ]
 
     def __init__(self, vim):
         super().__init__(vim)
         self.name = 'gitdifflog'
-        self.kind = ''
+        self.kind = 'gitdifflog'
 
     def on_init(self, context):
         self._on_init_diff(context)
@@ -36,7 +36,7 @@ class Source(GitDiffBase):
         cmd += [
             'log',
             '--oneline',
-            '--pretty=format:%h| %cd [%an] %s',
+            '--pretty=format:%h < %p| %cd [%an] %s',
             '--date=format:%Y-%m-%d %H:%M:%S',
         ]
         target = context['__target']
@@ -46,9 +46,14 @@ class Source(GitDiffBase):
 
     def gather_candidates(self, context):
         res = self._run_command(self._cmd)
+
+        hash_i = 0
+        p_hash_i = 2
         candidates = [{
             'word': r,
             'abbr': r,
+            'hash': r.split()[hash_i],
+            'p_hash': r.split()[p_hash_i],
         } for r in res]
 
         return candidates

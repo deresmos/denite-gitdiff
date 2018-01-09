@@ -47,7 +47,7 @@ class GitDiffBase(Base):
                 'get(g:, "denite_gitdiff_target", "")')
             self.vim.command(
                 'let g:denite_gitdiff_target = "{}"'.format(target))
-        base = context['args'][1:2] or self.git_head
+        base = (context['args'][1:2] or [self.git_head])[0]
         context['__target'] = target
         context['__base'] = base
 

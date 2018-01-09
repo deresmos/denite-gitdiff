@@ -82,9 +82,10 @@ class Source(GitDiffBase):
     def on_init(self, context):
         self._on_init_diff(context)
         cmd = self._cmd
-        cmd += ['diff', '--name-status', self.git_head]
+        cmd += ['diff', '--name-status']
         if context['__target']:
             cmd += [context['__target']]
+        cmd += [self.git_head]
         self._cmd = cmd
 
     def gather_candidates(self, context):

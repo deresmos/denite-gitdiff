@@ -25,16 +25,6 @@ class GitDiffBase(Base):
                 self.syntax_name, dic['name'], dic['link']))
 
     def _on_init_diff(self, context):
-        if context['args']:
-            target = context['args'][0]
-        else:
-            target = util.input(self.vim, context, 'Target: ')
-            target = target or self.vim.eval(
-                'get(g:, "denite_gitdiff_target", "")')
-            self.vim.command(
-                'let g:denite_gitdiff_target = "{}"'.format(target))
-        context['__target'] = target
-
         git_path = self.vim.eval('b:git_dir')
         worktree_path = os.path.dirname(git_path)
         head = self.vim.eval('fugitive#head()')
@@ -48,6 +38,16 @@ class GitDiffBase(Base):
         self._cmd = cmd
         self.git_path = git_path
         self.git_head = head
+
+        if context['args']:
+            target = context['args'][0]
+        else:
+            target = util.input(self.vim, context, 'Target: ')
+            target = target or self.vim.eval(
+                'get(g:, "denite_gitdiff_target", "")')
+            self.vim.command(
+                'let g:denite_gitdiff_target = "{}"'.format(target))
+        context['__target'] = target
 
     @staticmethod
     def _run_command(cmd):

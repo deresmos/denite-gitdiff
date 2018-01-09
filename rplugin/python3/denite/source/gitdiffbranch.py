@@ -51,7 +51,8 @@ class GitDiffBase(Base):
 
     @staticmethod
     def _run_command(cmd):
-        return check_output(cmd).decode('utf-8').split('\n')[:-1]
+        res = check_output(cmd).decode('utf-8').split('\n')
+        return res if len(res) == 1 else res[:-1]
 
 
 class Source(GitDiffBase):

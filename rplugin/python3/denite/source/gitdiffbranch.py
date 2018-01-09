@@ -47,7 +47,9 @@ class GitDiffBase(Base):
                 'get(g:, "denite_gitdiff_target", "")')
             self.vim.command(
                 'let g:denite_gitdiff_target = "{}"'.format(target))
+        base = context['args'][1:2] or self.git_head
         context['__target'] = target
+        context['__base'] = base
 
     @staticmethod
     def _run_command(cmd):
@@ -85,7 +87,7 @@ class Source(GitDiffBase):
         cmd += ['diff', '--name-status']
         if context['__target']:
             cmd += [context['__target']]
-        cmd += [self.git_head]
+        cmd += [context['__base']]
         self._cmd = cmd
 
     def gather_candidates(self, context):

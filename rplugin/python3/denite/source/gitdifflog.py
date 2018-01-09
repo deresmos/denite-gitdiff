@@ -34,8 +34,10 @@ class Source(GitDiffBase):
         self._on_init_diff(context)
         cmd = self._cmd
         cmd += [
-            'log', '--oneline', '--pretty=format:%h| %cd [%an] %s',
-            '--date=format:%Y-%m-%d %H:%M:%S'
+            'log',
+            '--oneline',
+            '--pretty=format:%h| %cd [%an] %s',
+            '--date=format:%Y-%m-%d %H:%M:%S',
         ]
         target = context['__target']
         if target != '':

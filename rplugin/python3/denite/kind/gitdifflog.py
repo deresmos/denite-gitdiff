@@ -12,12 +12,12 @@ class Kind(Base):
         context['sources_queue'].append([
             {
                 'name': 'gitdiffbranch',
-                'args': [ctx['hash'], ctx['p_hash']]
+                'args': [ctx['target_revision'], ctx['base_revision']]
             },
         ])
 
     def action_yank(self, context):
-        _yank(self.vim, "\n".join([x['hash'] for x in context['targets']]))
+        _yank(self.vim, "\n".join([x['base_revision'] for x in context['targets']]))
 
     def action_yank_p_hash(self, context):
-        _yank(self.vim, "\n".join([x['p_hash'] for x in context['targets']]))
+        _yank(self.vim, "\n".join([x['target_revision'] for x in context['targets']]))

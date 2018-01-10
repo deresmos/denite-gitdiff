@@ -52,8 +52,8 @@ class Source(GitDiffBase):
         candidates = [{
             'word': r,
             'abbr': r,
-            'hash': r.split()[hash_i],
-            'p_hash': r.split()[p_hash_i],
+            'base_revision': r.split()[hash_i],
+            'target_revision': r.split()[p_hash_i].replace('|', ''),
         } for r in res]
 
         return candidates

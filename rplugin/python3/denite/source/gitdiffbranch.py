@@ -100,7 +100,8 @@ class Source(GitDiffBase):
             'word': r[path_i],
             'abbr': '{}: {}'.format(r[type_i], r[path_i]),
             'action__path': os.path.abspath(r[path_i]),
-            'target_branch': context['__target'],
+            'target_revision': context['__target'],
+            'base_revision': context['__base'],
         } for r in res]
 
         return candidates

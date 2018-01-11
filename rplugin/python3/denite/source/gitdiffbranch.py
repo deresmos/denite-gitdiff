@@ -42,7 +42,11 @@ class GitDiffBase(Base):
         if context['args']:
             target = context['args'][0]
         else:
-            target = util.input(self.vim, context, 'Target: ')
+            target = util.input(
+                self.vim,
+                context,
+                'Target: ',
+                completion='custom,DeniteGitDiffCompleteRev')
             target = target or self.vim.eval(
                 'get(g:, "denite_gitdiff_target", "")')
             self.vim.command(

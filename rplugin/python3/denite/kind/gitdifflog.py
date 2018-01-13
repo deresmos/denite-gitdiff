@@ -35,7 +35,7 @@ class Kind(Base):
             return
 
         prev_id = self.vim.call('win_getid')
-        self.vim.command('pedit! /tmp/vim_pedit')
+        self.vim.command('pedit! denite_gitdiff_preview')
         self.vim.command('wincmd P')
         self.vim.command('lcd {}'.format(target['git_path']))
         self.vim.command('setlocal filetype=agit_stat')

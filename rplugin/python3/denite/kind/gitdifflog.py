@@ -43,7 +43,7 @@ class Kind(Base):
             'setlocal nobuflisted buftype=nofile bufhidden=unload')
         self.vim.command('read! git show --stat {}'.format(
             target['base_revision']))
-        self.vim.command('normal! gg')
+        self.vim.command('1,1delete')
         self.vim.call('win_gotoid', prev_id)
         self._previewed_target = target
 

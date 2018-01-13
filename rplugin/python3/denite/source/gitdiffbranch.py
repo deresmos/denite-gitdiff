@@ -52,8 +52,10 @@ class GitDiffBase(Base):
             self.vim.command(
                 'let g:denite_gitdiff_target = "{}"'.format(target))
         base = (context['args'][1:2] or [self.git_head])[0]
+        filter_val = (context['args'][2:3] or [''])[0]
         context['__target'] = target
         context['__base'] = base
+        context['__filter_val'] = filter_val
 
     @staticmethod
     def _run_command(cmd):
@@ -100,12 +102,13 @@ class Source(GitDiffBase):
 
         type_i = 0
         path_i = 1
+        filter_val = context['__filter_val']
         candidates = [{
             'word': r[path_i],
             'abbr': '{}: {}'.format(r[type_i], r[path_i]),
             'action__path': os.path.abspath(r[path_i]),
             'target_revision': context['__target'],
             'base_revision': context['__base'],
-        } for r in res]
+        } for r in res if filter_val in r[type_i] + ' ' + r[path_i]]
 
         return candidates

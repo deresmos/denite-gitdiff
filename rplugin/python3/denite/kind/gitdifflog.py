@@ -1,3 +1,5 @@
+from itertools import filterfalse
+
 from .base import Base, _yank
 
 
@@ -17,10 +19,12 @@ class Kind(Base):
         ])
 
     def action_yank(self, context):
-        _yank(self.vim, "\n".join([x['base_revision'] for x in context['targets']]))
+        _yank(self.vim,
+              "\n".join([x['base_revision'] for x in context['targets']]))
 
     def action_yank_p_hash(self, context):
-        _yank(self.vim, "\n".join([x['target_revision'] for x in context['targets']]))
+        _yank(self.vim,
+              "\n".join([x['target_revision'] for x in context['targets']]))
 
     def action_preview(self, context):
         target = context['targets'][0]

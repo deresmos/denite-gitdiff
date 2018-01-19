@@ -1,5 +1,4 @@
-import concurrent.futures
-from copy import deepcopy
+from copy import copy
 
 from .gitdifflog import Source
 
@@ -34,7 +33,7 @@ class Source(Source):
         self.kind = 'gitdifflog'
 
     def get_hash_merged(self, context):
-        cmd = deepcopy(self._cmd)
+        cmd = copy(self._cmd)
         cmd += [
             'log',
             '--oneline',
@@ -67,7 +66,7 @@ class Source(Source):
 
     def _get_hash_checkouted(self, context, merged_hash):
         log_num = self.vim.eval('get(g:, "denite_gitdiff_log_num", 1000)')
-        cmd = deepcopy(self._cmd)
+        cmd = copy(self._cmd)
         cmd += [
             'log',
             merged_hash,
@@ -101,7 +100,7 @@ class Source(Source):
         if not context['__base']:
             return []
 
-        cmd = deepcopy(self._cmd)
+        cmd = copy(self._cmd)
         cmd += [
             'log',
             '--ancestry-path',
@@ -112,7 +111,7 @@ class Source(Source):
         res = []
         res += self._run_command(cmd)
 
-        cmd = deepcopy(self._cmd)
+        cmd = copy(self._cmd)
         cmd += [
             'log',
             '--oneline',

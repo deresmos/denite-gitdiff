@@ -1,8 +1,3 @@
-import os
-from subprocess import check_output
-
-from denite import util
-
 from .gitdiffbranch import GitDiffBase
 
 _GIT_LOG_BRANCH_SYNTAX = ('syntax match {0}_branch '

@@ -26,6 +26,15 @@ class Kind(Base):
         _yank(self.vim,
               "\n".join([x['target_revision'] for x in context['targets']]))
 
+    def action_branch_log(self, context):
+        ctx = context['targets'][0]
+        context['sources_queue'].append([
+            {
+                'name': 'gitdiffloghash',
+                'args': [ctx['target_revision']]
+            },
+        ])
+
     def action_preview(self, context):
         target = context['targets'][0]
 

@@ -7,19 +7,22 @@ from .gitdifflog import Source
 def _get_previous_hash(res, hash):
     for x in res:
         if len(x) > 1 and hash == x[0]:
-            return x[1]
+            hash = x[1]
+            yield hash
     else:
-        return ''
+        yield ''
 
 
 def _get_descendant_hashes(res, base_hash):
     hash = base_hash
     hashes = [base_hash]
+    get_previous_hash_gen = _get_previous_hash(res, hash)
     while True:
-        hash = _get_previous_hash(res, hash)
+        hash = next(get_previous_hash_gen)
         if hash:
             hashes.append(hash)
         else:
+            get_previous_hash_gen.close()
             break
     return hashes
 

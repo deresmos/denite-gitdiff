@@ -37,6 +37,8 @@ class Kind(Base):
 
     def action_preview(self, context):
         target = context['targets'][0]
+        tmp_op = self.vim.options['splitbelow']
+        self.vim.options['splitbelow'] = False
 
         if (not context['auto_preview'] and self.__get_preview_window() and
                 self._previewed_target == target):
@@ -55,6 +57,7 @@ class Kind(Base):
         self.vim.command('1,1delete')
         self.vim.call('win_gotoid', prev_id)
         self._previewed_target = target
+        self.vim.options['splitbelow'] = tmp_op
 
     def __get_preview_window(self):
         return next(

@@ -66,30 +66,27 @@ class Source(Source):
             return ''
 
     def _get_hash_checkouted(self, context, merged_hash):
+        log_num = self.vim.eval('get(g:, "denite_gitdiff_log_num", 1000)')
         cmd = deepcopy(self._cmd)
         cmd += [
             'log',
             merged_hash,
             '--pretty=format:%H %P',
+            '-n',
+            str(log_num),
         ]
         res = [x.split() for x in self._run_command(cmd)]
         return self._get_first_hash_of_branch(res)
 
     def _get_first_hash_of_branch(self, res):
-        executor = concurrent.futures.ProcessPoolExecutor(max_workers=2)
-        tasks = []
-        tasks += [executor.submit(_get_descendant_hashes, res, res[0][1])]
-        tasks += [executor.submit(_get_descendant_hashes, res, res[0][2])]
+        l = _get_descendant_hashes(res, res[0][1])
+        r = _get_descendant_hashes(res, res[0][2])
 
-        tmp = []
-        for task in concurrent.futures.as_completed(tasks):
-            hashes = task.result()
-            tmp += hashes
-            if hashes[0] == res[0][2]:
-                r = hashes
-        base_checkout_hash = [
-            e for e in sorted(set(tmp), key=tmp.index) if tmp.count(e) > 1
-        ][0]
+        for x in r:
+            if x in l:
+                base_checkout_hash = x
+                break
+
         return r[r.index(base_checkout_hash) - 1]
 
     def on_init(self, context):

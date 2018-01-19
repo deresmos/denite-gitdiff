@@ -8,6 +8,7 @@ class Kind(Base):
         super().__init__(vim)
         self.name = 'gitdifflog'
         self.default_action = 'open'
+        self._previewed_target = {}
 
     def action_open(self, context):
         ctx = context['targets'][0]

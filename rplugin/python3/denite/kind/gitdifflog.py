@@ -38,8 +38,8 @@ class Kind(Base):
     def action_preview(self, context):
         target = context['targets'][0]
 
-        if (not context['auto_preview'] and self.__get_preview_window()
-                and self._previewed_target == target):
+        if (not context['auto_preview'] and self.__get_preview_window() and
+                self._previewed_target == target):
             self.vim.command('pclose!')
             return
 
@@ -50,8 +50,8 @@ class Kind(Base):
         self.vim.command('setlocal filetype=agit_stat')
         self.vim.command(
             'setlocal nobuflisted buftype=nofile bufhidden=unload')
-        self.vim.command('read! git show --stat {}'.format(
-            target['base_revision']))
+        self.vim.command(
+            'read! git show --stat {}'.format(target['base_revision']))
         self.vim.command('1,1delete')
         self.vim.call('win_gotoid', prev_id)
         self._previewed_target = target

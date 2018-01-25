@@ -39,7 +39,7 @@ class GitDiffBase(Base):
         self.git_path = git_path
         self.git_head = head
 
-        if context['args']:
+        if context['args'] and context['args'][0] != 'input':
             target = context['args'][0]
         else:
             target = self.vim.eval('get(g:, "denite_gitdiff_target", "")')

@@ -9,7 +9,7 @@ from .base import Base
 class GitDiffBase(Base):
     _HIGHLIGHT_SYNTAX = []
 
-    def __init(self, vim):
+    def __init__(self, vim):
         super().__init__(vim)
 
         self.git_path = ''

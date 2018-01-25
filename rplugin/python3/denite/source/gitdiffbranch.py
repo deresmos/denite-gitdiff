@@ -9,7 +9,7 @@ from .base import Base
 class GitDiffBase(Base):
     _HIGHLIGHT_SYNTAX = []
 
-    def __init(self, vim):
+    def __init__(self, vim):
         super().__init__(vim)
 
         self.git_path = ''
@@ -25,29 +25,42 @@ class GitDiffBase(Base):
                 self.syntax_name, dic['name'], dic['link']))
 
     def _on_init_diff(self, context):
-        if context['args']:
-            target = context['args'][0]
-        else:
-            target = util.input(self.vim, context, 'Target: ')
-            target = target or self.vim.eval(
-                'get(g:, "denite_gitdiff_target", "")')
-            self.vim.command(
-                'let g:denite_gitdiff_target = "{}"'.format(target))
-        context['__target'] = target
-
         git_path = self.vim.eval('b:git_dir')
         worktree_path = os.path.dirname(git_path)
         head = self.vim.eval('fugitive#head()')
 
         cmd = [
-            'git', '--git-dir={}'.format(git_path),
-            '--work-tree={}'.format(worktree_path)
+            'git',
+            '--git-dir={}'.format(git_path),
+            '--work-tree={}'.format(worktree_path),
         ]
 
         os.chdir(worktree_path)
         self._cmd = cmd
         self.git_path = git_path
         self.git_head = head
+
+        if context['args'] and context['args'][0] != 'input':
+            target = context['args'][0]
+        else:
+            target = self.vim.eval('get(g:, "denite_gitdiff_target", "")')
+
+            target_input = util.input(
+                self.vim,
+                context,
+                'Target: ' if target == '' else 'Target [{}]: '.format(target),
+                completion='custom,DeniteGitDiffCompleteRev')
+            target = target_input or target
+            self.vim.command(
+                'let g:denite_gitdiff_target = "{}"'.format(target))
+
+        base = (context['args'][1:2] or ['HEAD'])[0]
+        filter_val = (context['args'][2:3] or [''])[0]
+        target_file = (context['args'][3:4] or [''])[0]
+        context['__target'] = target
+        context['__base'] = base
+        context['__filter_val'] = filter_val
+        context['__target_file'] = target_file
 
     @staticmethod
     def _run_command(cmd):
@@ -84,7 +97,8 @@ class Source(GitDiffBase):
         cmd += ['diff', '--name-status']
         if context['__target']:
             cmd += [context['__target']]
-        cmd += [self.git_head]
+        if context['__base']:
+            cmd += [context['__base']]
         self._cmd = cmd
 
     def gather_candidates(self, context):
@@ -93,11 +107,13 @@ class Source(GitDiffBase):
 
         type_i = 0
         path_i = 1
+        filter_val = context['__filter_val']
         candidates = [{
             'word': r[path_i],
             'abbr': '{}: {}'.format(r[type_i], r[path_i]),
             'action__path': os.path.abspath(r[path_i]),
-            'target_branch': context['__target'],
-        } for r in res]
+            'target_revision': context['__target'],
+            'base_revision': context['__base'],
+        } for r in res if filter_val in r[type_i] + ' ' + r[path_i]]
 
         return candidates

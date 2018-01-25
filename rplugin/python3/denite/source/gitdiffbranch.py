@@ -54,9 +54,11 @@ class GitDiffBase(Base):
                 'let g:denite_gitdiff_target = "{}"'.format(target))
         base = (context['args'][1:2] or ['HEAD'])[0]
         filter_val = (context['args'][2:3] or [''])[0]
+        target_file = (context['args'][3:4] or [''])[0]
         context['__target'] = target
         context['__base'] = base
         context['__filter_val'] = filter_val
+        context['__target_file'] = target_file
 
     @staticmethod
     def _run_command(cmd):

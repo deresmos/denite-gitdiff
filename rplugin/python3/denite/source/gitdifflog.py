@@ -59,6 +59,8 @@ class Source(GitDiffBase):
         target = context['__target']
         if target != '':
             cmd += [target + '...' + context['__base']]
+        if context['__target_file']:
+            cmd += [context['__target_file']]
         self._cmd = cmd
 
     def gather_candidates(self, context):

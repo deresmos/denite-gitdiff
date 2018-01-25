@@ -30,8 +30,9 @@ class GitDiffBase(Base):
         head = self.vim.eval('fugitive#head()')
 
         cmd = [
-            'git', '--git-dir={}'.format(git_path),
-            '--work-tree={}'.format(worktree_path)
+            'git',
+            '--git-dir={}'.format(git_path),
+            '--work-tree={}'.format(worktree_path),
         ]
 
         os.chdir(worktree_path)
@@ -52,6 +53,7 @@ class GitDiffBase(Base):
             target = target_input or target
             self.vim.command(
                 'let g:denite_gitdiff_target = "{}"'.format(target))
+
         base = (context['args'][1:2] or ['HEAD'])[0]
         filter_val = (context['args'][2:3] or [''])[0]
         target_file = (context['args'][3:4] or [''])[0]

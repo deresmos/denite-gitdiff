@@ -24,11 +24,9 @@ class GitDiffBase(Base):
             self.vim.command('highlight default link {0}_{1} {2}'.format(
                 self.syntax_name, dic['name'], dic['link']))
 
-    def _on_init_diff(self, context):
+    def _init_cmd(self):
         git_path = self.vim.eval('b:git_dir')
         worktree_path = os.path.dirname(git_path)
-        head = self.vim.eval('fugitive#head()')
-
         cmd = [
             'git',
             '--git-dir={}'.format(git_path),
@@ -38,6 +36,10 @@ class GitDiffBase(Base):
         os.chdir(worktree_path)
         self._cmd = cmd
         self.git_path = git_path
+
+    def _on_init_diff(self, context):
+        self._init_cmd()
+        head = self.vim.eval('fugitive#head()')
         self.git_head = head
 
         if context['args'] and context['args'][0] != 'input':

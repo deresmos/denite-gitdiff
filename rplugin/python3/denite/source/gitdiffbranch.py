@@ -6,7 +6,7 @@ from denite import util
 from .base import Base
 
 
-class GitDiffBase(Base):
+class GitBase(Base):
     _HIGHLIGHT_SYNTAX = []
 
     def __init__(self, vim):
@@ -24,7 +24,7 @@ class GitDiffBase(Base):
             self.vim.command('highlight default link {0}_{1} {2}'.format(
                 self.syntax_name, dic['name'], dic['link']))
 
-    def _init_cmd(self):
+    def on_init(self, context):
         git_path = self.vim.eval('b:git_dir')
         worktree_path = os.path.dirname(git_path)
         cmd = [
@@ -37,11 +37,17 @@ class GitDiffBase(Base):
         self._cmd = cmd
         self.git_path = git_path
 
-    def _on_init_diff(self, context):
-        self._init_cmd()
         head = self.vim.eval('fugitive#head()')
         self.git_head = head
 
+    @staticmethod
+    def _run_command(cmd):
+        return [r for r in check_output(cmd).decode('utf-8').split('\n') if r]
+
+
+class GitDiffBase(GitBase):
+    def _on_init_diff(self, context):
+        super().on_init(context)
         if context['args'] and context['args'][0] != 'input':
             target = context['args'][0]
         else:
@@ -64,9 +70,8 @@ class GitDiffBase(Base):
         context['__filter_val'] = filter_val
         context['__target_file'] = target_file
 
-    @staticmethod
-    def _run_command(cmd):
-        return [r for r in check_output(cmd).decode('utf-8').split('\n') if r]
+    def on_init(self, context):
+        self._on_init_diff(context)
 
 
 class Source(GitDiffBase):
@@ -94,7 +99,7 @@ class Source(GitDiffBase):
         self.kind = 'gitdiffbranch'
 
     def on_init(self, context):
-        self._on_init_diff(context)
+        super().on_init(context)
         cmd = self._cmd
         cmd += ['diff', '--name-status']
         if context['__target']:

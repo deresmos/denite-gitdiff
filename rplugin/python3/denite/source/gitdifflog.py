@@ -49,7 +49,7 @@ class Source(GitDiffBase):
         self.vim.command(_GIT_LOG_R_BRANCH_HIGHLIGHT.format(self.syntax_name))
 
     def on_init(self, context):
-        self._on_init_diff(context)
+        super().on_init(context)
         cmd = self._cmd
         cmd += [
             'log',

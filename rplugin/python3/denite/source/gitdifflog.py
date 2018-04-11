@@ -50,8 +50,8 @@ class Source(GitDiffBase):
 
     def on_init(self, context):
         super().on_init(context)
-        cmd = self._cmd
-        cmd += [
+        cmd = [
+            'git',
             'log',
             '--oneline',
             '--pretty=format:%h < %p| %cd [%an] %s %d',
@@ -65,18 +65,18 @@ class Source(GitDiffBase):
         self._cmd = cmd
 
     def gather_candidates(self, context):
-        res = self._run_command(self._cmd)
+        res = self.run_command(self._cmd)
 
         hash_i = 0
         p_hash_i = 2
         filter_val = context['__filter_val']
-        git_path = self.git_path
+        git_rootpath = self.git_rootpath
         candidates = [{
             'word': r,
             'abbr': r,
             'base_revision': r.split()[hash_i],
             'target_revision': r.split()[p_hash_i].replace('|', ''),
-            'git_path': git_path,
+            'git_rootpath': git_rootpath,
         } for r in res if filter_val in r]
 
         return candidates

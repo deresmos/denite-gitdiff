@@ -12,7 +12,7 @@ class GitBase(Base):
     def __init__(self, vim):
         super().__init__(vim)
 
-        self.git_path = ''
+        self.git_rootpath = ''
         self.git_head = ''
         self._cmd = []
 
@@ -25,24 +25,17 @@ class GitBase(Base):
                 self.syntax_name, dic['name'], dic['link']))
 
     def on_init(self, context):
-        git_path = self.vim.eval('b:git_dir')
-        worktree_path = os.path.dirname(git_path)
-        cmd = [
-            'git',
-            '--git-dir={}'.format(git_path),
-            '--work-tree={}'.format(worktree_path),
-        ]
-
-        os.chdir(worktree_path)
-        self._cmd = cmd
-        self.git_path = git_path
+        git_rootpath = self.vim.eval('b:git_dir')
+        self.git_rootpath = git_rootpath
 
         head = self.vim.eval('fugitive#head()')
         self.git_head = head
 
-    @staticmethod
-    def _run_command(cmd):
-        return [r for r in check_output(cmd).decode('utf-8').split('\n') if r]
+    def run_command(self, cmd):
+        return [
+            r for r in check_output(cmd, cwd=self.git_rootpath).decode('utf-8')
+            .split('\n') if r
+        ]
 
 
 class GitDiffBase(GitBase):
@@ -100,8 +93,7 @@ class Source(GitDiffBase):
 
     def on_init(self, context):
         super().on_init(context)
-        cmd = self._cmd
-        cmd += ['diff', '--name-status']
+        cmd = ['git', 'diff', '--name-status']
         if context['__target']:
             cmd += [context['__target']]
         if context['__base']:
@@ -109,7 +101,7 @@ class Source(GitDiffBase):
         self._cmd = cmd
 
     def gather_candidates(self, context):
-        res = self._run_command(self._cmd)
+        res = self.run_command(self._cmd)
         res = [r.split('\t') for r in res]
 
         type_i = 0

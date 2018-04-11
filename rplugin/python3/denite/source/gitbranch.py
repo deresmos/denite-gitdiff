@@ -11,8 +11,8 @@ class Source(GitBase):
 
     def on_init(self, context):
         super().on_init(context)
-        cmd = self._cmd
-        cmd += [
+        cmd = [
+            'git',
             'for-each-ref',
             '--sort=committerdate',
             '--format=%(refname:short)',
@@ -22,7 +22,7 @@ class Source(GitBase):
         self._cmd = cmd
 
     def gather_candidates(self, context):
-        res = self._run_command(self._cmd)
+        res = self.run_command(self._cmd)
 
         candidates = [{
             'word': r,

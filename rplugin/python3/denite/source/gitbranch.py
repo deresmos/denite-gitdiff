@@ -27,7 +27,8 @@ class Source(GitBase):
         candidates = [{
             'word': r,
             'abbr': r,
-            'action__path': os.path.abspath(r),
+            'action__branch': r.split()[-1],
+            'action__basebranch': self.git_head,
         } for r in res]
 
         return candidates

@@ -14,8 +14,8 @@ class Source(GitBase):
         cmd = [
             'git',
             'for-each-ref',
-            '--sort=committerdate',
-            '--format=%(refname:short)',
+            '--sort=-committerdate',
+            '--format=%(HEAD) %(refname:short)',
             'refs/heads',
             'refs/remotes',
         ]

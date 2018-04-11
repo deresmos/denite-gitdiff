@@ -58,3 +58,12 @@ class Kind(Kind):
                 'args': [ctx['action__branch'], ctx['action__basebranch']]
             },
         ])
+
+    def action_branchlog(self, context):
+        ctx = context['targets'][0]
+        context['sources_queue'].append([
+            {
+                'name': 'gitdifflog',
+                'args': [ctx['action__branch'], '']
+            },
+        ])

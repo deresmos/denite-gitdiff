@@ -58,8 +58,12 @@ class Source(GitDiffBase):
             '--date=format:%Y-%m-%d %H:%M:%S',
         ]
         target = context['__target']
-        if target:
-            cmd += [target + '...' + context['__base']]
+        base = context['__base']
+        if target and base:
+            cmd += [target + '...' + base]
+        elif target:
+            cmd += [target]
+
         if context['__target_file']:
             cmd += [context['__target_file']]
         self._cmd = cmd

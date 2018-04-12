@@ -1,5 +1,5 @@
 import os
-from subprocess import check_output
+from subprocess import STDOUT, CalledProcessError, check_output
 
 from denite import util
 
@@ -33,10 +33,14 @@ class GitBase(Base):
         self.git_head = head
 
     def run_command(self, cmd):
-        return [
-            r for r in check_output(cmd, cwd=self.git_rootpath).decode('utf-8')
-            .split('\n') if r
-        ]
+        try:
+            res = check_output(
+                cmd, cwd=self.git_rootpath, stderr=STDOUT).decode('utf-8')
+
+            return [r for r in res.split('\n') if r]
+        except CalledProcessError as e:
+            util.error(self.vim, e.output.decode('utf-8'))
+            return []
 
 
 class GitDiffBase(GitBase):

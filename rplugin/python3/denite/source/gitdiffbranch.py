@@ -26,8 +26,8 @@ class GitBase(Base):
 
     def on_init(self, context):
         git_rootpath = self.vim.eval('b:git_dir')
-        os.chdir(os.path.dirname(git_rootpath))
-        self.git_rootpath = git_rootpath
+        self.git_rootpath = os.path.dirname(git_rootpath)
+        os.chdir(self.git_rootpath)
 
         head = self.vim.eval('fugitive#head()')
         self.git_head = head

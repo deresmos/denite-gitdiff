@@ -19,6 +19,10 @@ class Kind(Base):
             },
         ])
 
+    def action_gopen(self, context):
+        ctx = context['targets'][0]
+        self.vim.command('Gedit {}:%'.format(ctx['base_revision']))
+
     def action_yank(self, context):
         _yank(self.vim,
               "\n".join([x['base_revision'] for x in context['targets']]))
@@ -49,7 +53,7 @@ class Kind(Base):
         prev_id = self.vim.call('win_getid')
         self.vim.command('pedit! denite_gitdiff_preview')
         self.vim.command('wincmd P')
-        self.vim.command('lcd {}'.format(target['git_path']))
+        self.vim.command('lcd {}'.format(target['git_rootpath']))
         self.vim.command('setlocal filetype=agit_stat')
         self.vim.command(
             'setlocal nobuflisted buftype=nofile bufhidden=unload')

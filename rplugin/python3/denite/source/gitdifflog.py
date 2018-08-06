@@ -49,34 +49,40 @@ class Source(GitDiffBase):
         self.vim.command(_GIT_LOG_R_BRANCH_HIGHLIGHT.format(self.syntax_name))
 
     def on_init(self, context):
-        self._on_init_diff(context)
-        cmd = self._cmd
-        cmd += [
+        super().on_init(context)
+        cmd = [
+            'git',
             'log',
             '--oneline',
             '--pretty=format:%h < %p| %cd [%an] %s %d',
             '--date=format:%Y-%m-%d %H:%M:%S',
         ]
         target = context['__target']
-        if target:
-            cmd += [target + '...' + context['__base']]
+        base = context['__base']
+        if target and base:
+            cmd += [target + '...' + base]
+        elif target:
+            cmd += [target]
+
         if context['__target_file']:
             cmd += [context['__target_file']]
         self._cmd = cmd
 
     def gather_candidates(self, context):
-        res = self._run_command(self._cmd)
+        res = self.run_command(self._cmd)
 
         hash_i = 0
         p_hash_i = 2
         filter_val = context['__filter_val']
-        git_path = self.git_path
+        target_file = context['__target_file']
+        git_rootpath = self.git_rootpath
         candidates = [{
             'word': r,
             'abbr': r,
             'base_revision': r.split()[hash_i],
             'target_revision': r.split()[p_hash_i].replace('|', ''),
-            'git_path': git_path,
+            'git_rootpath': git_rootpath,
+            'target_file': target_file,
         } for r in res if filter_val in r]
 
         return candidates

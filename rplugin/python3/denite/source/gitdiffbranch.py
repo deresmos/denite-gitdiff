@@ -1,18 +1,18 @@
 import os
-from subprocess import check_output
+from subprocess import STDOUT, CalledProcessError, check_output
 
 from denite import util
 
 from .base import Base
 
 
-class GitDiffBase(Base):
+class GitBase(Base):
     _HIGHLIGHT_SYNTAX = []
 
     def __init__(self, vim):
         super().__init__(vim)
 
-        self.git_path = ''
+        self.git_rootpath = ''
         self.git_head = ''
         self._cmd = []
 
@@ -24,22 +24,28 @@ class GitDiffBase(Base):
             self.vim.command('highlight default link {0}_{1} {2}'.format(
                 self.syntax_name, dic['name'], dic['link']))
 
-    def _on_init_diff(self, context):
-        git_path = self.vim.eval('b:git_dir')
-        worktree_path = os.path.dirname(git_path)
+    def on_init(self, context):
+        git_rootpath = self.vim.eval('b:git_dir')
+        self.git_rootpath = os.path.dirname(git_rootpath)
+        os.chdir(self.git_rootpath)
+
         head = self.vim.eval('fugitive#head()')
-
-        cmd = [
-            'git',
-            '--git-dir={}'.format(git_path),
-            '--work-tree={}'.format(worktree_path),
-        ]
-
-        os.chdir(worktree_path)
-        self._cmd = cmd
-        self.git_path = git_path
         self.git_head = head
 
+    def run_command(self, cmd):
+        try:
+            res = check_output(
+                cmd, cwd=self.git_rootpath, stderr=STDOUT).decode('utf-8')
+
+            return [r for r in res.split('\n') if r]
+        except CalledProcessError as e:
+            util.error(self.vim, e.output.decode('utf-8'))
+            return []
+
+
+class GitDiffBase(GitBase):
+    def _on_init_diff(self, context):
+        super().on_init(context)
         if context['args'] and context['args'][0] != 'input':
             target = context['args'][0]
         else:
@@ -62,9 +68,8 @@ class GitDiffBase(Base):
         context['__filter_val'] = filter_val
         context['__target_file'] = target_file
 
-    @staticmethod
-    def _run_command(cmd):
-        return [r for r in check_output(cmd).decode('utf-8').split('\n') if r]
+    def on_init(self, context):
+        self._on_init_diff(context)
 
 
 class Source(GitDiffBase):
@@ -92,9 +97,8 @@ class Source(GitDiffBase):
         self.kind = 'gitdiffbranch'
 
     def on_init(self, context):
-        self._on_init_diff(context)
-        cmd = self._cmd
-        cmd += ['diff', '--name-status']
+        super().on_init(context)
+        cmd = ['git', 'diff', '--name-status']
         if context['__target']:
             cmd += [context['__target']]
         if context['__base']:
@@ -102,7 +106,7 @@ class Source(GitDiffBase):
         self._cmd = cmd
 
     def gather_candidates(self, context):
-        res = self._run_command(self._cmd)
+        res = self.run_command(self._cmd)
         res = [r.split('\t') for r in res]
 
         type_i = 0

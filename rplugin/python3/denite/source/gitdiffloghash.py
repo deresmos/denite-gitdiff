@@ -1,5 +1,3 @@
-from copy import copy
-
 from .gitdifflog import Source
 
 
@@ -33,8 +31,8 @@ class Source(Source):
         self.kind = 'gitdifflog'
 
     def get_hash_merged(self, context):
-        cmd = copy(self._cmd)
-        cmd += [
+        cmd = [
+            'git',
             'log',
             '--oneline',
             '--reverse',
@@ -42,7 +40,7 @@ class Source(Source):
             '--pretty=format:%h %p',
             '{}..'.format(context['__target'], context['__base']),
         ]
-        res = [x.split() for x in self._run_command(cmd)]
+        res = [x.split() for x in self.run_command(cmd)]
         return self._get_hash_merged_branch(res, context['__target'])
 
     @staticmethod
@@ -66,15 +64,15 @@ class Source(Source):
 
     def _get_hash_checkouted(self, context, merged_hash):
         log_num = self.vim.eval('get(g:, "denite_gitdiff_log_num", 1000)')
-        cmd = copy(self._cmd)
-        cmd += [
+        cmd = [
+            'git',
             'log',
             merged_hash,
             '--pretty=format:%H %P',
             '-n',
             str(log_num),
         ]
-        res = [x.split() for x in self._run_command(cmd)]
+        res = [x.split() for x in self.run_command(cmd)]
         return self._get_first_hash_of_branch(res)
 
     def _get_first_hash_of_branch(self, res):
@@ -89,7 +87,7 @@ class Source(Source):
         return r[r.index(base_checkout_hash) - 1]
 
     def on_init(self, context):
-        self._on_init_diff(context)
+        super().on_init(context)
         merged_hash = self.get_hash_merged(context)
         context['__base'] = merged_hash
         if merged_hash:
@@ -100,8 +98,8 @@ class Source(Source):
         if not context['__base']:
             return []
 
-        cmd = copy(self._cmd)
-        cmd += [
+        cmd = [
+            'git',
             'log',
             '--ancestry-path',
             '{}..{}'.format(context['__target'], context['__base']),
@@ -109,10 +107,10 @@ class Source(Source):
             '--date=format:%Y-%m-%d %H:%M:%S',
         ]
         res = []
-        res += self._run_command(cmd)
+        res += self.run_command(cmd)
 
-        cmd = copy(self._cmd)
-        cmd += [
+        cmd = [
+            'git',
             'log',
             '--oneline',
             context['__target'],
@@ -121,18 +119,18 @@ class Source(Source):
             '--pretty=format:%h < %p| %cd [%an] %s %d',
             '--date=format:%Y-%m-%d %H:%M:%S',
         ]
-        res += self._run_command(cmd)
+        res += self.run_command(cmd)
 
         hash_i = 0
         p_hash_i = 2
         filter_val = context['__filter_val']
-        git_path = self.git_path
+        git_rootpath = self.git_rootpath
         candidates = [{
             'word': r,
             'abbr': r,
             'base_revision': r.split()[hash_i],
             'target_revision': r.split()[p_hash_i].replace('|', ''),
-            'git_path': git_path,
+            'git_rootpath': git_rootpath,
         } for r in res if filter_val in r]
 
         return candidates

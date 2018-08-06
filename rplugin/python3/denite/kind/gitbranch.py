@@ -1,5 +1,3 @@
-from copy import copy
-
 from denite import util
 
 from ..source.gitdiffbranch import GitBase

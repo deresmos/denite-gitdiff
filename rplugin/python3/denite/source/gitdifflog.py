@@ -74,6 +74,7 @@ class Source(GitDiffBase):
         hash_i = 0
         p_hash_i = 2
         filter_val = context['__filter_val']
+        target_file = context['__target_file']
         git_rootpath = self.git_rootpath
         candidates = [{
             'word': r,
@@ -81,6 +82,7 @@ class Source(GitDiffBase):
             'base_revision': r.split()[hash_i],
             'target_revision': r.split()[p_hash_i].replace('|', ''),
             'git_rootpath': git_rootpath,
+            'target_file': target_file,
         } for r in res if filter_val in r]
 
         return candidates

@@ -19,6 +19,10 @@ class Kind(Base):
             },
         ])
 
+    def action_gopen(self, context):
+        ctx = context['targets'][0]
+        self.vim.command('Gedit {}:%'.format(ctx['base_revision']))
+
     def action_yank(self, context):
         _yank(self.vim,
               "\n".join([x['base_revision'] for x in context['targets']]))

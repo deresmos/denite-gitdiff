@@ -19,11 +19,11 @@ class Kind(Base):
             },
         ])
 
-    def action_gopen(self, context):
+    def action_gedit(self, context):
         ctx = context['targets'][0]
         self.vim.command('Gedit {}:%'.format(ctx['base_revision']))
 
-    def action_gopen_tab(self, context):
+    def action_tabgedit(self, context):
         ctx = context['targets'][0]
         self.vim.command('tab split | :Gedit {}:%'.format(
             ctx['base_revision']))

@@ -28,25 +28,25 @@ class Kind(Base):
         self.vim.command('tab split | :Gedit {}:%'.format(
             ctx['base_revision']))
 
-    def action_vdiff(self, context):
+    def action_openvdiff(self, context):
         ctx = context['targets'][0]
         self.vim.command('Gedit {}:% | :Gvdiff {}'.format(
             ctx['base_revision'],
             ctx['target_revision'],
         ))
 
-    def action_vdiff_local(self, context):
+    def action_openvdiff_local(self, context):
         ctx = context['targets'][0]
         self.vim.command('Gvdiff {}'.format(ctx['target_revision']))
 
-    def action_vdiff_tab(self, context):
+    def action_tabvdiff(self, context):
         ctx = context['targets'][0]
         self.vim.command('tab split | :Gedit {}:% | :Gvdiff {}'.format(
             ctx['base_revision'],
             ctx['target_revision'],
         ))
 
-    def action_vdiff_local_tab(self, context):
+    def action_tabvdiff_local(self, context):
         ctx = context['targets'][0]
         self.vim.command('tab split | :Gvdiff {}'.format(
             ctx['target_revision'], ))

@@ -23,6 +23,34 @@ class Kind(Base):
         ctx = context['targets'][0]
         self.vim.command('Gedit {}:%'.format(ctx['base_revision']))
 
+    def action_gopen_tab(self, context):
+        ctx = context['targets'][0]
+        self.vim.command('tab split | :Gedit {}:%'.format(
+            ctx['base_revision']))
+
+    def action_vdiff(self, context):
+        ctx = context['targets'][0]
+        self.vim.command('Gedit {}:% | :Gvdiff {}'.format(
+            ctx['base_revision'],
+            ctx['target_revision'],
+        ))
+
+    def action_vdiff_local(self, context):
+        ctx = context['targets'][0]
+        self.vim.command('Gvdiff {}'.format(ctx['target_revision']))
+
+    def action_vdiff_tab(self, context):
+        ctx = context['targets'][0]
+        self.vim.command('tab split | :Gedit {}:% | :Gvdiff {}'.format(
+            ctx['base_revision'],
+            ctx['target_revision'],
+        ))
+
+    def action_vdiff_local_tab(self, context):
+        ctx = context['targets'][0]
+        self.vim.command('tab split | :Gvdiff {}'.format(
+            ctx['target_revision'], ))
+
     def action_yank(self, context):
         _yank(self.vim,
               "\n".join([x['base_revision'] for x in context['targets']]))

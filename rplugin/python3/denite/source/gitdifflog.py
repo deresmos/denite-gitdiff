@@ -60,7 +60,7 @@ class Source(GitDiffBase):
         target = context['__target']
         base = context['__base']
         if target and base:
-            cmd += [target + '...' + base]
+            cmd += [target + '..' + base]
         elif target:
             cmd += [target]
 

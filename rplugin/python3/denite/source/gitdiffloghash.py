@@ -1,4 +1,12 @@
-from .gitdifflog import Source
+import os
+import sys
+
+try:
+    sys.path.insert(1, os.path.dirname(__file__))
+    from gitdifflog import Source
+
+finally:
+    sys.path.remove(os.path.dirname(__file__))
 
 
 def _get_previous_hash(res, hash):

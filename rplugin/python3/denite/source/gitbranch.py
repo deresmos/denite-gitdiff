@@ -1,4 +1,12 @@
-from .gitdiffbranch import GitBase
+import os
+import sys
+
+try:
+    sys.path.insert(1, os.path.dirname(__file__))
+    from gitdiff_base import GitBase
+
+finally:
+    sys.path.remove(os.path.dirname(__file__))
 
 
 class Source(GitBase):

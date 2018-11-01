@@ -1,6 +1,6 @@
 from copy import copy
 
-from .file import Kind
+from denite.kind.file import Kind
 
 
 class Kind(Kind):

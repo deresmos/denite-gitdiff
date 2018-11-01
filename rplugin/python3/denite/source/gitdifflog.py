@@ -1,4 +1,12 @@
-from .gitdiffbranch import GitDiffBase
+import os
+import sys
+
+try:
+    sys.path.insert(1, os.path.dirname(__file__))
+    from gitdiff_base import GitDiffBase
+
+finally:
+    sys.path.remove(os.path.dirname(__file__))
 
 _GIT_LOG_BRANCH_SYNTAX = ('syntax match {0}_branch '
                           r'/\v\(.+\)/ '

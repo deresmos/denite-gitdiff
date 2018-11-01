@@ -1,7 +1,15 @@
-from denite import util
+import os
+import sys
 
-from ..source.gitdiffbranch import GitBase
-from .file import Kind
+from denite import util
+from denite.kind.file import Kind
+
+try:
+    sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..'))
+    from gitdiff_base import GitBase
+
+finally:
+    sys.path.remove(os.path.join(os.path.dirname(__file__), '..'))
 
 
 class Kind(Kind):

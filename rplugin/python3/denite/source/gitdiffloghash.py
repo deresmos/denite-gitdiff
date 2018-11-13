@@ -3,7 +3,7 @@ import sys
 
 try:
     sys.path.insert(1, os.path.dirname(__file__))
-    from gitdifflog import Source
+    from gitdifflog import Source as GitDiffLogSource
 
 finally:
     sys.path.remove(os.path.dirname(__file__))
@@ -32,7 +32,7 @@ def _get_descendant_hashes(res, base_hash):
     return hashes
 
 
-class Source(Source):
+class Source(GitDiffLogSource):
     def __init__(self, vim):
         super().__init__(vim)
         self.name = 'gitdiffloghash'

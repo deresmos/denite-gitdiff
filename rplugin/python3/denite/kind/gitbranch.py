@@ -2,7 +2,7 @@ import os
 import sys
 
 from denite import util
-from denite.kind.file import Kind
+from denite.kind.file import Kind as KindFile
 
 try:
     sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..'))
@@ -12,7 +12,7 @@ finally:
     sys.path.remove(os.path.join(os.path.dirname(__file__), '..'))
 
 
-class Kind(Kind):
+class Kind(KindFile):
     def __init__(self, vim):
         super().__init__(vim)
         self.name = 'gitbranch'

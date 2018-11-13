@@ -1,9 +1,9 @@
 from copy import copy
 
-from denite.kind.file import Kind
+from denite.kind.file import Kind as KindFile
 
 
-class Kind(Kind):
+class Kind(KindFile):
     def __init__(self, vim):
         super().__init__(vim)
         self.name = 'gitdiffbranch'

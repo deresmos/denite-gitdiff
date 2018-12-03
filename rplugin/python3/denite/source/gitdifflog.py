@@ -3,7 +3,7 @@ import sys
 
 try:
     sys.path.insert(1, os.path.dirname(__file__))
-    from gitdiff_base import GitDiffBase
+    from _gitdiff_base import GitDiffBase
 
 finally:
     sys.path.remove(os.path.dirname(__file__))

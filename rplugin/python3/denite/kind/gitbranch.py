@@ -6,7 +6,7 @@ from denite.kind.file import Kind as KindFile
 
 try:
     sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..'))
-    from gitdiff_base import GitBase
+    from _gitdiff_base import GitBase
 
 finally:
     sys.path.remove(os.path.join(os.path.dirname(__file__), '..'))

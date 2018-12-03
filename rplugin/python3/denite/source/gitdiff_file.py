@@ -30,8 +30,8 @@ class Source(GitDiffBase):
 
     def __init__(self, vim):
         super().__init__(vim)
-        self.name = 'gitdiffbranch'
-        self.kind = 'gitdiffbranch'
+        self.name = 'gitdiff_file'
+        self.kind = 'gitdiff_file'
 
     def on_init(self, context):
         super().on_init(context)

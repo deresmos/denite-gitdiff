@@ -60,7 +60,7 @@ class Kind(KindFile):
         ctx = context['targets'][0]
         context['sources_queue'].append([
             {
-                'name': 'gitdiffbranch',
+                'name': 'gitdiff_file',
                 'args': [ctx['action__branch'], ctx['action__basebranch']]
             },
         ])

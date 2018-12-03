@@ -6,7 +6,7 @@ from denite.kind.file import Kind as KindFile
 class Kind(KindFile):
     def __init__(self, vim):
         super().__init__(vim)
-        self.name = 'gitdiffbranch'
+        self.name = 'gitdiff_file'
         self.default_action = 'open'
 
     def _run_gvdiff(self, context, func, *, local=False):

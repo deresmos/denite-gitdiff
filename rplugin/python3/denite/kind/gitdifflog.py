@@ -14,7 +14,7 @@ class Kind(Base):
         ctx = context['targets'][0]
         context['sources_queue'].append([
             {
-                'name': 'gitdiffbranch',
+                'name': 'gitdiff_file',
                 'args': [ctx['target_revision'], ctx['base_revision']]
             },
         ])

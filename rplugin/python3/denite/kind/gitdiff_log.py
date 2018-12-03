@@ -63,7 +63,7 @@ class Kind(Base):
         ctx = context['targets'][0]
         context['sources_queue'].append([
             {
-                'name': 'gitdiffloghash',
+                'name': 'gitdiff_mergelog',
                 'args': [ctx['target_revision']]
             },
         ])

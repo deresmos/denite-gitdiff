@@ -3,7 +3,7 @@ import sys
 
 try:
     sys.path.insert(1, os.path.dirname(__file__))
-    from gitdifflog import Source as GitDiffLogSource
+    from gitdiff_log import Source as GitDiffLogSource
 
 finally:
     sys.path.remove(os.path.dirname(__file__))
@@ -36,7 +36,7 @@ class Source(GitDiffLogSource):
     def __init__(self, vim):
         super().__init__(vim)
         self.name = 'gitdiffloghash'
-        self.kind = 'gitdifflog'
+        self.kind = 'gitdiff_log'
 
     def get_hash_merged(self, context):
         cmd = [

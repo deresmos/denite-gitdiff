@@ -51,7 +51,7 @@ class Kind(KindFile):
         ctx = context['targets'][0]
         context['sources_queue'].append([
             {
-                'name': 'gitdifflog',
+                'name': 'gitdiff_log',
                 'args': [ctx['action__branch'], ctx['action__basebranch']]
             },
         ])
@@ -69,7 +69,7 @@ class Kind(KindFile):
         ctx = context['targets'][0]
         context['sources_queue'].append([
             {
-                'name': 'gitdifflog',
+                'name': 'gitdiff_log',
                 'args': [ctx['action__branch'], '']
             },
         ])

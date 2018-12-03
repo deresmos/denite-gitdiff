@@ -44,8 +44,8 @@ class Source(GitDiffBase):
 
     def __init__(self, vim):
         super().__init__(vim)
-        self.name = 'gitdifflog'
-        self.kind = 'gitdifflog'
+        self.name = 'gitdiff_log'
+        self.kind = 'gitdiff_log'
         self.sorters = []
 
     def highlight(self):

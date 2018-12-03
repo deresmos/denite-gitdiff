@@ -6,7 +6,7 @@ from denite.kind.base import Base, _yank
 class Kind(Base):
     def __init__(self, vim):
         super().__init__(vim)
-        self.name = 'gitdifflog'
+        self.name = 'gitdiff_log'
         self.default_action = 'open'
         self._previewed_target = {}
 

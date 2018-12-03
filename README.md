@@ -21,8 +21,8 @@ Usage
 --
 * `gitdiff_file` Comparing target branch.
   e.g.`Denite gitdiff_file[:target_branch:base_branch:filter_val]`
-* `gitdifflog` Comparing target branch log.
-  e.g.`Denite gitdifflog[:target_branch:base_branch:filter_val:target_file]`
+* `gitdiff_log` Comparing target branch log.
+  e.g.`Denite gitdiff_log[:target_branch:base_branch:filter_val:target_file]`
 
 
 License

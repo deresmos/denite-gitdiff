@@ -46,29 +46,24 @@ class Source(GitDiffLogSource):
             '--reverse',
             '--ancestry-path',
             '--pretty=format:%h %p',
-            '{}..'.format(context['__target'], context['__base']),
+            '{}..{}'.format(context['__target'], context['__base']),
         ]
         res = [x.split() for x in self.run_command(cmd)]
         return self._get_hash_merged_branch(res, context['__target'])
 
     @staticmethod
     def _get_hash_merged_branch(res, commit):
-        if not len(res[0]):
-            return ''
-
         hash = commit
         for x in res:
-            if not x:
-                return ''
+            if len(x) == 3 and hash == x[2]:
+                return (x[0], x[2])
 
             if hash == x[1]:
                 hash = x[0]
                 continue
 
-            if len(x) == 3 and hash == x[2]:
-                return x[0]
         else:
-            return ''
+            return ('', '')
 
     def _get_hash_checkouted(self, context, merged_hash):
         log_num = self.vim.eval('get(g:, "denite_gitdiff_log_num", 1000)')
@@ -92,38 +87,39 @@ class Source(GitDiffLogSource):
                 base_checkout_hash = x
                 break
 
-        return r[r.index(base_checkout_hash) - 1]
+        return r[r.index(base_checkout_hash)]
 
     def on_init(self, context):
         super().on_init(context)
-        merged_hash = self.get_hash_merged(context)
+        merged_hash, pre_merged_hash = self.get_hash_merged(context)
         context['__base'] = merged_hash
         if merged_hash:
             context['__target'] = self._get_hash_checkouted(
                 context, merged_hash)
+            self._pre_merged_hash = pre_merged_hash
 
     def gather_candidates(self, context):
         if not context['__base']:
             return []
 
+        res = []
         cmd = [
             'git',
             'log',
-            '--ancestry-path',
-            '{}..{}'.format(context['__target'], context['__base']),
+            '--oneline',
+            context['__base'],
+            '-n',
+            '1',
             '--pretty=format:%h < %p| %cd [%an] %s %d',
             '--date=format:%Y-%m-%d %H:%M:%S',
         ]
-        res = []
         res += self.run_command(cmd)
 
         cmd = [
             'git',
             'log',
-            '--oneline',
-            context['__target'],
-            '-n',
-            '1',
+            '--ancestry-path',
+            '{}...{}'.format(context['__target'], self._pre_merged_hash),
             '--pretty=format:%h < %p| %cd [%an] %s %d',
             '--date=format:%Y-%m-%d %H:%M:%S',
         ]

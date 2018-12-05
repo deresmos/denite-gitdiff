@@ -64,7 +64,7 @@ class Kind(Base):
         context['sources_queue'].append([
             {
                 'name': 'gitdiff_mergelog',
-                'args': [ctx['target_revision']]
+                'args': [ctx['base_revision']]
             },
         ])
 

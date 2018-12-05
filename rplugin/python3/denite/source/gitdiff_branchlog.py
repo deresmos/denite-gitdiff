@@ -35,7 +35,7 @@ def _get_descendant_hashes(res, base_hash):
 class Source(GitDiffLogSource):
     def __init__(self, vim):
         super().__init__(vim)
-        self.name = 'gitdiff_mergelog'
+        self.name = 'gitdiff_branchlog'
         self.kind = 'gitdiff_log'
 
     def get_hash_merged(self, context):

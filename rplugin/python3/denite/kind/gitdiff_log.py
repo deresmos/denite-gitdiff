@@ -68,6 +68,15 @@ class Kind(Base):
             },
         ])
 
+    def action_merge_log(self, context):
+        ctx = context['targets'][0]
+        context['sources_queue'].append([
+            {
+                'name': 'gitdiff_mergelog',
+                'args': [ctx['base_revision']]
+            },
+        ])
+
     def action_preview(self, context):
         target = context['targets'][0]
         tmp_op = self.vim.options['splitbelow']

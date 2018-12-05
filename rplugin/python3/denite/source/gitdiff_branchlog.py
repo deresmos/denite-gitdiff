@@ -33,6 +33,8 @@ def _get_descendant_hashes(res, base_hash):
 
 
 class Source(GitDiffLogSource):
+    EMPTY_HASHES = ('', '')
+
     def __init__(self, vim):
         super().__init__(vim)
         self.name = 'gitdiff_branchlog'
@@ -51,8 +53,7 @@ class Source(GitDiffLogSource):
         res = [x.split() for x in self.run_command(cmd)]
         return self._get_hash_merged_branch(res, context['__target'])
 
-    @staticmethod
-    def _get_hash_merged_branch(res, commit):
+    def _get_hash_merged_branch(self, res, commit):
         hash = commit
         for x in res:
             if len(x) == 3 and hash == x[2]:
@@ -63,7 +64,7 @@ class Source(GitDiffLogSource):
                 continue
 
         else:
-            return ('', '')
+            return self.EMPTY_HASHES
 
     def _get_hash_checkouted(self, context, merged_hash):
         log_num = self.vim.eval('get(g:, "denite_gitdiff_log_num", 1000)')

@@ -41,6 +41,16 @@ class GitBase(Base):
             util.error(self.vim, e.output.decode('utf-8'))
             return []
 
+    def run_command_gen(self, cmd):
+        try:
+            proc = Popen(cmd, cwd=self.git_rootpath, stdout=PIPE)
+            for line in iter(proc.stdout.readline, ''):
+                if line:
+                    yield line.decode('utf-8')
+        except CalledProcessError as e:
+            util.error(self.vim, e.output.decode('utf-8'))
+            return []
+
 
 class GitDiffBase(GitBase):
     def _on_init_diff(self, context):

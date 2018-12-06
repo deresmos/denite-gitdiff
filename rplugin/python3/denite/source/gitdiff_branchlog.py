@@ -9,27 +9,24 @@ finally:
     sys.path.remove(os.path.dirname(__file__))
 
 
-def _get_previous_hash(res, hash):
+def _gen_previous_hash(res, _hash):
     for x in res:
-        if len(x) > 1 and hash == x[0]:
-            hash = x[1]
-            yield hash
+        if len(x) > 1 and _hash == x[0]:
+            _hash = x[1]
+            yield _hash
     else:
         yield ''
 
 
-def _get_descendant_hashes(res, base_hash):
-    hash = base_hash
-    hashes = [base_hash]
-    get_previous_hash_gen = _get_previous_hash(res, hash)
-    while True:
-        hash = next(get_previous_hash_gen)
-        if hash:
-            hashes.append(hash)
+def _gen_descendant_hash(res, base_hash):
+    yield base_hash
+
+    get_previous_hash_gen = _gen_previous_hash(res, base_hash)
+    for _hash in get_previous_hash_gen:
+        if _hash:
+            yield _hash
         else:
-            get_previous_hash_gen.close()
             break
-    return hashes
 
 
 class Source(GitDiffLogSource):
@@ -50,21 +47,21 @@ class Source(GitDiffLogSource):
             '--pretty=format:%h %p',
             '{}..{}'.format(context['__target'], context['__base']),
         ]
-        res = [x.split() for x in self.run_command(cmd)]
-        return self._get_hash_merged_branch(res, context['__target'])
+        gen_line = self.run_command_gen(cmd)
+        return self._get_hash_merged_branch(gen_line, context['__target'])
 
-    def _get_hash_merged_branch(self, res, commit):
-        hash = commit
-        for x in res:
-            if len(x) == 3 and hash == x[2]:
+    def _get_hash_merged_branch(self, hashes, commit):
+        _hash = commit
+        for x in hashes:
+            x = x.split()
+            if len(x) == 3 and _hash == x[2]:
                 return (x[0], x[2])
 
-            if hash == x[1]:
-                hash = x[0]
+            if _hash == x[1]:
+                _hash = x[0]
                 continue
 
-        else:
-            return self.EMPTY_HASHES
+        return self.EMPTY_HASHES
 
     def _get_hash_checkouted(self, context, merged_hash):
         log_num = self.vim.eval('get(g:, "denite_gitdiff_log_num", 1000)')
@@ -80,15 +77,14 @@ class Source(GitDiffLogSource):
         return self._get_first_hash_of_branch(res)
 
     def _get_first_hash_of_branch(self, res):
-        l = _get_descendant_hashes(res, res[0][1])
-        r = _get_descendant_hashes(res, res[0][2])
+        r = _gen_descendant_hash(res, res[0][2])
+        l = list(_gen_descendant_hash(res, res[0][1]))
 
         for x in r:
             if x in l:
-                base_checkout_hash = x
                 break
 
-        return r[r.index(base_checkout_hash)]
+        return next(r)
 
     def on_init(self, context):
         super().on_init(context)

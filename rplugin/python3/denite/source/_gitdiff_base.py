@@ -44,7 +44,7 @@ class GitBase(Base):
     def run_command_gen(self, cmd):
         try:
             proc = Popen(cmd, cwd=self.git_rootpath, stdout=PIPE)
-            for line in iter(proc.stdout.readline, ''):
+            for line in proc.stdout:
                 if line:
                     yield line.decode('utf-8')
         except CalledProcessError as e:

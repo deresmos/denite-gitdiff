@@ -9,26 +9,6 @@ finally:
     sys.path.remove(os.path.dirname(__file__))
 
 
-def _gen_previous_hash(res, _hash):
-    for x in res:
-        if len(x) > 1 and _hash == x[0]:
-            _hash = x[1]
-            yield _hash
-    else:
-        yield ''
-
-
-def _gen_descendant_hash(res, base_hash):
-    yield base_hash
-
-    get_previous_hash_gen = _gen_previous_hash(res, base_hash)
-    for _hash in get_previous_hash_gen:
-        if _hash:
-            yield _hash
-        else:
-            break
-
-
 class Source(GitDiffLogSource):
     EMPTY_HASHES = ('', '')
 

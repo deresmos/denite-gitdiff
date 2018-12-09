@@ -1,5 +1,5 @@
 import os
-from subprocess import STDOUT, CalledProcessError, check_output
+from subprocess import PIPE, STDOUT, CalledProcessError, Popen, check_output
 
 from denite import util
 from denite.source.base import Base

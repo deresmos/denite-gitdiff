@@ -64,21 +64,11 @@ class Source(GitDiffLogSource):
         return self.EMPTY_HASHES
 
     def _get_hash_checkouted(self, context, merged_hash):
-        log_num = self.vim.eval('get(g:, "denite_gitdiff_log_num", 1000)')
-        cmd = [
-            'git',
-            'log',
-            merged_hash,
-            '--pretty=format:%H %P',
-            '-n',
-            str(log_num),
-        ]
+        cmd = ['git', 'log', merged_hash, '--pretty=format:%h %p', '-n', '1']
         res = [x.split() for x in self.run_command(cmd)]
-        return self._get_first_hash_of_branch(res)
 
-    def _get_first_hash_of_branch(self, res):
-        r = _gen_descendant_hash(res, res[0][2])
-        l = list(_gen_descendant_hash(res, res[0][1]))
+        r = self._gen_descendant_hash(res, res[0][2])
+        l = list(self._gen_descendant_hash(res, res[0][1]))
 
         checkout_hash = None
         for x in r:
@@ -87,6 +77,25 @@ class Source(GitDiffLogSource):
                 break
 
         return checkout_hash
+
+    def _gen_descendant_hash(self, res, target_hash):
+        log_num = self.vim.eval('get(g:, "denite_gitdiff_log_num", 1000)')
+        cmd = [
+            'git',
+            'log',
+            '--first-parent',
+            '--pretty=format:%h',
+            '-n',
+            str(log_num),
+            target_hash,
+        ]
+        gen_line = self.run_command_gen(cmd)
+
+        for _hash in gen_line:
+            if _hash:
+                yield _hash.strip()
+            else:
+                break
 
     def on_init(self, context):
         super().on_init(context)

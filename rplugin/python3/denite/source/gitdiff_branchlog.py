@@ -80,11 +80,13 @@ class Source(GitDiffLogSource):
         r = _gen_descendant_hash(res, res[0][2])
         l = list(_gen_descendant_hash(res, res[0][1]))
 
+        checkout_hash = None
         for x in r:
             if x in l:
+                checkout_hash = x
                 break
 
-        return next(r)
+        return checkout_hash
 
     def on_init(self, context):
         super().on_init(context)
@@ -116,6 +118,7 @@ class Source(GitDiffLogSource):
             'git',
             'log',
             '--ancestry-path',
+            '--first-parent',
             '{}...{}'.format(context['__target'], self._pre_merged_hash),
             '--pretty=format:%h < %p| %cd [%an] %s %d',
             '--date=format:%Y-%m-%d %H:%M:%S',

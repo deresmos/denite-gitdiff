@@ -12,8 +12,8 @@ finally:
 class Source(GitBase):
     def __init__(self, vim):
         super().__init__(vim)
-        self.name = 'gitbranch'
-        self.kind = 'gitbranch'
+        self.name = 'gitdiff_branch'
+        self.kind = 'gitdiff_branch'
 
     def on_init(self, context):
         super().on_init(context)

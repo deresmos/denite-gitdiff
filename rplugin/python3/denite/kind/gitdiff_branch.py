@@ -15,7 +15,7 @@ finally:
 class Kind(KindFile):
     def __init__(self, vim):
         super().__init__(vim)
-        self.name = 'gitbranch'
+        self.name = 'gitdiff_branch'
         self.default_action = 'checkout'
 
         self._base = GitBase(vim)

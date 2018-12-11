@@ -41,6 +41,10 @@ class Source(GitDiffBase):
             're': r'\v\w+ \< (\w+| )+\|'
         },
     ]
+    FORMAT = [
+        '--pretty=format:%h < %p| %cd [%an] %s %d',
+        '--date=format:%Y-%m-%d %H:%M:%S',
+    ]
 
     def __init__(self, vim):
         super().__init__(vim)
@@ -62,9 +66,9 @@ class Source(GitDiffBase):
             'git',
             'log',
             '--oneline',
-            '--pretty=format:%h < %p| %cd [%an] %s %d',
-            '--date=format:%Y-%m-%d %H:%M:%S',
         ]
+        cmd += self.FORMAT
+
         target = context['__target']
         base = context['__base']
         if target and base:

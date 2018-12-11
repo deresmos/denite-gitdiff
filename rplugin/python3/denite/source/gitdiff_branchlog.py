@@ -10,18 +10,17 @@ finally:
 
 
 class Source(GitDiffLogSource):
-    EMPTY_HASHES = ('', '')
+    EMPTY_HASHES = ('', '', '')
 
     def __init__(self, vim):
         super().__init__(vim)
         self.name = 'gitdiff_branchlog'
         self.kind = 'gitdiff_log'
 
-    def get_hash_merged(self, context):
+    def get_merged_hash(self, context):
         cmd = [
             'git',
             'log',
-            '--oneline',
             '--reverse',
             '--ancestry-path',
             '--pretty=format:%h %p',
@@ -35,7 +34,7 @@ class Source(GitDiffLogSource):
         for x in hashes:
             x = x.split()
             if len(x) == 3 and _hash == x[2]:
-                return (x[0], x[2])
+                return x
 
             if _hash == x[1]:
                 _hash = x[0]
@@ -43,48 +42,24 @@ class Source(GitDiffLogSource):
 
         return self.EMPTY_HASHES
 
-    def _get_hash_checkouted(self, context, merged_hash):
-        cmd = ['git', 'log', merged_hash, '--pretty=format:%h %p', '-n', '1']
-        res = [x.split() for x in self.run_command(cmd)]
-
-        r = self._gen_descendant_hash(res, res[0][2])
-        l = list(self._gen_descendant_hash(res, res[0][1]))
-
-        checkout_hash = None
-        for x in r:
-            if x in l:
-                checkout_hash = x
-                break
+    def get_merge_base_hash(self, context, left_hash, right_hash):
+        cmd = ['git', 'merge-base', left_hash, right_hash]
+        merge_base_hash = self.run_command(cmd)
+        if merge_base_hash:
+            checkout_hash = merge_base_hash[0]
+        else:
+            checkout_hash = ''
 
         return checkout_hash
 
-    def _gen_descendant_hash(self, res, target_hash):
-        log_num = self.vim.eval('get(g:, "denite_gitdiff_log_num", 1000)')
-        cmd = [
-            'git',
-            'log',
-            '--first-parent',
-            '--pretty=format:%h',
-            '-n',
-            str(log_num),
-            target_hash,
-        ]
-        gen_line = self.run_command_gen(cmd)
-
-        for _hash in gen_line:
-            if _hash:
-                yield _hash.strip()
-            else:
-                break
-
     def on_init(self, context):
         super().on_init(context)
-        merged_hash, pre_merged_hash = self.get_hash_merged(context)
-        context['__base'] = merged_hash
-        if merged_hash:
-            context['__target'] = self._get_hash_checkouted(
-                context, merged_hash)
-            self._pre_merged_hash = pre_merged_hash
+        merged_hash = self.get_merged_hash(context)
+        context['__base'] = merged_hash[0]
+        if merged_hash != self.EMPTY_HASHES:
+            context['__target'] = self.get_merge_base_hash(
+                context, merged_hash[1], merged_hash[2])
+            self._pre_merged_hash = merged_hash[2]
 
     def gather_candidates(self, context):
         if not context['__base']:
@@ -98,20 +73,18 @@ class Source(GitDiffLogSource):
             context['__base'],
             '-n',
             '1',
-            '--pretty=format:%h < %p| %cd [%an] %s %d',
-            '--date=format:%Y-%m-%d %H:%M:%S',
         ]
+        cmd += self.FORMAT
         res += self.run_command(cmd)
 
         cmd = [
             'git',
             'log',
-            '--ancestry-path',
             '--first-parent',
             '{}...{}'.format(context['__target'], self._pre_merged_hash),
-            '--pretty=format:%h < %p| %cd [%an] %s %d',
-            '--date=format:%Y-%m-%d %H:%M:%S',
         ]
+        cmd += self.FORMAT
+
         res += self.run_command(cmd)
 
         hash_i = 0

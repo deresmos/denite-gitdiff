@@ -15,11 +15,10 @@ class Source(BranchLogSource):
         self.name = 'gitdiff_mergelog'
         self.kind = 'gitdiff_log'
 
-    def get_hash_merged(self, context):
+    def get_merged_hash(self, context):
         cmd = [
             'git',
             'log',
-            '--oneline',
             '--pretty=format:%h %p',
             '-n',
             '1',
@@ -30,4 +29,4 @@ class Source(BranchLogSource):
         if not res:
             return self.EMPTY_HASHES
 
-        return (res[0][0], res[0][2])
+        return res[0]

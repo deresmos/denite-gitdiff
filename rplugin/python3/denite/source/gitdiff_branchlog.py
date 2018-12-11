@@ -87,16 +87,8 @@ class Source(GitDiffLogSource):
 
         res += self.run_command(cmd)
 
-        hash_i = 0
-        p_hash_i = 2
         filter_val = context['__filter_val']
-        git_rootpath = self.git_rootpath
-        candidates = [{
-            'word': r,
-            'abbr': r,
-            'base_revision': r.split()[hash_i],
-            'target_revision': r.split()[p_hash_i].replace('|', ''),
-            'git_rootpath': git_rootpath,
-        } for r in res if filter_val in r]
+        _candidates = self._gather_candidates
+        candidates = [_candidates(context, r) for r in res if filter_val in r]
 
         return candidates

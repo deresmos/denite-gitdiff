@@ -38,11 +38,16 @@ class Source(GitDiffBase):
         {
             'name': 'gitLogHash',
             'link': 'Number',
-            're': r'\v\w+ \< (\w+| )+\|'
+            're': r'\v\w+\|'
+        },
+        {
+            'name': 'gitLogHashParent',
+            'link': 'Number',
+            're': r'\v\< (\w+| )+'
         },
     ]
     FORMAT = [
-        '--pretty=format:%h < %p| %cd [%an] %s %d',
+        '--pretty=format:%h| %s %d [%an] %cd < %p',
         '--date=format:%Y-%m-%d %H:%M:%S',
     ]
 
@@ -81,20 +86,33 @@ class Source(GitDiffBase):
         self._cmd = cmd
 
     def gather_candidates(self, context):
-        res = self.run_command(self._cmd)
+        lines = self.run_command_gen(self._cmd)
 
-        hash_i = 0
-        p_hash_i = 2
         filter_val = context['__filter_val']
+        _candidates = self._gather_candidates
+        candidates = [
+            _candidates(context, line) for line in lines if filter_val in line
+        ]
+
+        return candidates
+
+    def _gather_candidates(self, context, line):
+        hash_i = 0
         target_file = context['__target_file']
-        git_rootpath = self.git_rootpath
-        candidates = [{
-            'word': r,
-            'abbr': r,
-            'base_revision': r.split()[hash_i],
-            'target_revision': r.split()[p_hash_i].replace('|', ''),
-            'git_rootpath': git_rootpath,
+
+        word = line.split(' <')[0]
+        candidates = {
+            'word': word,
+            'abbr': word,
+            'base_revision': line.split('|')[hash_i],
+            'git_rootpath': self.git_rootpath,
             'target_file': target_file,
-        } for r in res if filter_val in r]
+        }
+
+        target = line.split(' <')[1].split()[0:1]
+        if target:
+            candidates['target_revision'] = target[0]
+        else:
+            candidates['target_revision'] = ''
 
         return candidates

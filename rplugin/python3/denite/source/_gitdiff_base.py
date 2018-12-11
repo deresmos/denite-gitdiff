@@ -12,7 +12,7 @@ class GitBase(Base):
         super().__init__(vim)
 
         self.git_rootpath = ''
-        self.git_head = ''
+        self.git_head = 'HEAD'
         self._cmd = []
 
     def highlight(self):
@@ -23,13 +23,31 @@ class GitBase(Base):
             self.vim.command('highlight default link {0}_{1} {2}'.format(
                 self.syntax_name, dic['name'], dic['link']))
 
-    def on_init(self, context):
-        git_rootpath = self.vim.eval('b:git_dir')
-        self.git_rootpath = os.path.dirname(git_rootpath)
-        os.chdir(self.git_rootpath)
+    def get_git_root(self, cwd, filepath=None):
+        if os.path.exists(filepath):
+            dirpath = os.path.dirname(filepath)
+        else:
+            dirpath = cwd
+        dirpath = os.path.abspath(dirpath)
 
-        head = self.vim.eval('fugitive#head()')
-        self.git_head = head
+        root_path = ''
+        while dirpath != '/':
+            for dir_ in os.scandir(dirpath):
+                if '.git' == dir_.name:
+                    root_path = os.path.abspath(dir_)
+
+            dirpath = os.path.dirname(dirpath)
+
+        return root_path
+
+    def on_init(self, context):
+        git_rootpath = self.vim.eval('get(b:, "git_dir", "")')
+        if not git_rootpath:
+            filepath = self.vim.current.buffer.name
+            git_rootpath = self.get_git_root(context['path'], filepath)
+            self.vim.command(':let b:git_dir = "%s"' % git_rootpath)
+
+        self.git_rootpath = os.path.dirname(git_rootpath)
 
     def run_command(self, cmd):
         try:

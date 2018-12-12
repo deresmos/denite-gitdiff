@@ -27,9 +27,10 @@ class Source(GitDiffLogSource):
             '{}..{}'.format(context['__target'], context['__base']),
         ]
         gen_line = self.run_command_gen(cmd)
-        return self._get_hash_merged_branch(gen_line, context['__target'])
+        hashes = self._get_merged_hash(gen_line, context['__target'])
+        return hashes
 
-    def _get_hash_merged_branch(self, hashes, commit):
+    def _get_merged_hash(self, hashes, commit):
         _hash = commit
         for x in hashes:
             x = x.split()

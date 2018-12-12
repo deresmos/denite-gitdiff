@@ -9,18 +9,13 @@ finally:
     sys.path.remove(os.path.dirname(__file__))
 
 _GIT_LOG_BRANCH_SYNTAX = ('syntax match {0}_branch '
-                          r'/\v\(.+\)/ '
+                          r'/\v\|\s+\(.+\)/ '
                           'contained containedin={0}')
 
 _GIT_LOG_L_BRANCH_SYNTAX = ('syntax match {0}_lBranch '
                             r'/\v(\w|\/)+/ '
                             'contained containedin={0}_branch')
 _GIT_LOG_L_BRANCH_HIGHLIGHT = 'highlight default link {0}_lBranch Number'
-
-_GIT_LOG_R_BRANCH_SYNTAX = ('syntax match {0}_rBranch '
-                            r'/\v(origin)\/(\w|\/)+/ '
-                            'contained containedin={0}_branch')
-_GIT_LOG_R_BRANCH_HIGHLIGHT = 'highlight default link {0}_rBranch Function'
 
 
 class Source(GitDiffBase):
@@ -37,17 +32,17 @@ class Source(GitDiffBase):
         },
         {
             'name': 'gitLogHash',
-            'link': 'Number',
-            're': r'\v\w+\|'
+            'link': 'Comment',
+            're': r'\v\zs\w+\ze\|'
         },
         {
-            'name': 'gitLogHashParent',
-            'link': 'Number',
-            're': r'\v\< (\w+| )+'
+            'name': 'gitLogSeparator',
+            'link': 'Tag',
+            're': r'\v\|'
         },
     ]
     FORMAT = [
-        '--pretty=format:%h| %s %d [%an] %cd < %p',
+        '--pretty=format:%h| %s | %d [%an] %cd < %p < %H %P',
         '--date=format:%Y-%m-%d %H:%M:%S',
     ]
 
@@ -62,8 +57,6 @@ class Source(GitDiffBase):
         self.vim.command(_GIT_LOG_BRANCH_SYNTAX.format(self.syntax_name))
         self.vim.command(_GIT_LOG_L_BRANCH_SYNTAX.format(self.syntax_name))
         self.vim.command(_GIT_LOG_L_BRANCH_HIGHLIGHT.format(self.syntax_name))
-        self.vim.command(_GIT_LOG_R_BRANCH_SYNTAX.format(self.syntax_name))
-        self.vim.command(_GIT_LOG_R_BRANCH_HIGHLIGHT.format(self.syntax_name))
 
     def on_init(self, context):
         super().on_init(context)
@@ -100,10 +93,9 @@ class Source(GitDiffBase):
         hash_i = 0
         target_file = context['__target_file']
 
-        word = line.split(' <')[0]
         candidates = {
-            'word': word,
-            'abbr': word,
+            'word': line,
+            'abbr': line.split(' <')[0],
             'base_revision': line.split('|')[hash_i],
             'git_rootpath': self.git_rootpath,
             'target_file': target_file,

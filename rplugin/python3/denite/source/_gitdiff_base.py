@@ -47,6 +47,7 @@ class GitBase(Base):
             git_rootpath = self.get_git_root(context['path'], filepath)
             self.vim.command(':let b:git_dir = "%s"' % git_rootpath)
 
+        os.chdir(os.path.dirname(git_rootpath))
         self.git_rootpath = os.path.dirname(git_rootpath)
 
     def run_command(self, cmd):

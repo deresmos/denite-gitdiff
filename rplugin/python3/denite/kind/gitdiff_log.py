@@ -1,6 +1,6 @@
 from itertools import filterfalse
 
-from denite.kind.base import Base, _yank
+from denite.base.kind import Base, _yank
 
 
 class Kind(Base):

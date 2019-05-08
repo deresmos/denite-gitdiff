@@ -2,7 +2,7 @@ import os
 from subprocess import PIPE, STDOUT, CalledProcessError, Popen, check_output
 
 from denite import util
-from denite.source.base import Base
+from denite.base.source import Base
 
 
 class GitBase(Base):
@@ -75,6 +75,9 @@ class GitBase(Base):
         except CalledProcessError as e:
             util.error(self.vim, e.output.decode("utf-8"))
             return []
+
+    def gather_candidates(self, context):
+        pass
 
 
 class GitDiffBase(GitBase):

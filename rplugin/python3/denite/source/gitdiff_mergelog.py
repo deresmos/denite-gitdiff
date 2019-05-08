@@ -12,18 +12,11 @@ finally:
 class Source(BranchLogSource):
     def __init__(self, vim):
         super().__init__(vim)
-        self.name = 'gitdiff_mergelog'
-        self.kind = 'gitdiff_log'
+        self.name = "gitdiff_mergelog"
+        self.kind = "gitdiff_log"
 
     def get_merged_hash(self, context):
-        cmd = [
-            'git',
-            'log',
-            '--pretty=format:%h %p',
-            '-n',
-            '1',
-            context['__target'],
-        ]
+        cmd = ["git", "log", "--pretty=format:%h %p", "-n", "1", context["__target"]]
         res = [x.split() for x in self.run_command(cmd)]
 
         if not res:

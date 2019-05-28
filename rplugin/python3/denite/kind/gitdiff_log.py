@@ -95,7 +95,7 @@ class Kind(Base):
         self.vim.command("pedit! denite_gitdiff_preview")
         self.vim.command("wincmd P")
         self.vim.command("lcd {}".format(target["git_rootpath"]))
-        self.vim.command("setlocal filetype=agit_stat")
+        self.vim.command("setlocal filetype=diff")
         self.vim.command("setlocal nobuflisted buftype=nofile bufhidden=unload")
         self.vim.command("read! git show --stat {}".format(target["base_revision"]))
         self.vim.command("1,1delete")

@@ -77,7 +77,7 @@ class Kind(Base):
         self.vim.options["splitbelow"] = False
 
         if (
-            not context["auto_preview"]
+            not context["auto_action"] != "preview"
             and self.__get_preview_window()
             and self._previewed_target == target
         ):

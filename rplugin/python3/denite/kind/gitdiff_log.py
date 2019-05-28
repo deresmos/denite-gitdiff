@@ -8,6 +8,7 @@ class Kind(Base):
         super().__init__(vim)
         self.name = "gitdiff_log"
         self.default_action = "open"
+        self.persist_actions += ["preview", "preview_scroll_up", "preview_scroll_down"]
         self._previewed_target = {}
 
     def action_open(self, context):
@@ -71,6 +72,12 @@ class Kind(Base):
             [{"name": "gitdiff_mergelog", "args": [ctx["base_revision"]]}]
         )
 
+    def action_preview_scroll_up(self, context):
+        self._preview_scroll(context, "up")
+
+    def action_preview_scroll_down(self, context):
+        self._preview_scroll(context, "down")
+
     def action_preview(self, context):
         target = context["targets"][0]
         tmp_op = self.vim.options["splitbelow"]
@@ -101,3 +108,12 @@ class Kind(Base):
             filterfalse(lambda x: not x.options["previewwindow"], self.vim.windows),
             None,
         )
+
+    def _preview_scroll(self, context, direction):
+        prev_id = self.vim.call("win_getid")
+        self.vim.command("wincmd P")
+        if direction == "up":
+            self.vim.command('execute "normal! \<C-u>"')
+        elif direction == "down":
+            self.vim.command('execute "normal! \<C-d>"')
+        self.vim.call("win_gotoid", prev_id)

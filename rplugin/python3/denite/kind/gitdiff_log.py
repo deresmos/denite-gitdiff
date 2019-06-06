@@ -78,6 +78,18 @@ class Kind(Base):
     def action_preview_scroll_down(self, context):
         self._preview_scroll(context, "down")
 
+    def action_reset_soft(self, context):
+        self._git_reset("soft", context)
+
+    def action_reset_mixed(self, context):
+        self._git_reset("mixed", context)
+
+    def action_reset_hard(self, context):
+        self._git_reset("hard", context)
+
+    def action_reset_hard_orig_head(self, context):
+        self._git_reset("hard", context, commit_hash="ORIG_HEAD")
+
     def action_preview(self, context):
         target = context["targets"][0]
 
@@ -124,3 +136,15 @@ class Kind(Base):
         elif direction == "down":
             self.vim.command('execute "normal! \<C-d>"')
         self.vim.call("win_gotoid", prev_id)
+
+    def _git_reset(self, mode, context, commit_hash=None):
+        target = context["targets"][0]
+        commit_hash = commit_hash or target["base_revision"]
+        gitroot = target["git_rootpath"]
+        args = ["git", "reset", "--" + mode, commit_hash]
+        self._run_command(args, gitroot)
+
+    def _run_command(self, cmd, gitroot=""):
+        res = check_output(cmd, cwd=gitroot, stderr=STDOUT).decode("utf-8")
+
+        return [r for r in res.split("\n") if r]

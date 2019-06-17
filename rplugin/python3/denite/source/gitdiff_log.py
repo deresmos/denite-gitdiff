@@ -9,7 +9,7 @@ finally:
     sys.path.remove(os.path.dirname(__file__))
 
 _GIT_LOG_BRANCH_SYNTAX = (
-    "syntax match {0}_branch " r"/\v\|\s+\(.+\)/ " "contained containedin={0}"
+    "syntax match {0}_branch " r"/\v\s+\(.+\)/ " "contained containedin={0}"
 )
 
 _GIT_LOG_L_BRANCH_SYNTAX = (
@@ -30,7 +30,7 @@ class Source(GitDiffBase):
         {"name": "gitLogSeparator", "link": "Tag", "re": r"\v\|"},
     ]
     FORMAT = [
-        "--pretty=format:%h| %s | %d [%an] %cd < %p < %H %P",
+        "--pretty=format:%h| %<(80,trunc)%s | %cd [%an] %d  < %p < %H %P",
         "--date=format:%Y-%m-%d %H:%M:%S",
     ]
 

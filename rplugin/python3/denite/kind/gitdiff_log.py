@@ -1,4 +1,5 @@
 from itertools import filterfalse
+from subprocess import STDOUT, check_output
 
 from denite.base.kind import Base, _yank
 

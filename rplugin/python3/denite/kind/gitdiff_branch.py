@@ -1,7 +1,6 @@
 import os
 import sys
 
-from denite import util
 from denite.kind.file import Kind as KindFile
 
 try:
@@ -42,7 +41,7 @@ class Kind(KindFile):
         for target in context["targets"]:
             t_branch = target["action__branch"]
             msg = "Force delete {}? [y/n] : ".format(t_branch)
-            force = util.input(self.vim, context, msg) == "y"
+            force = self.vim.call("denite#util#input", msg) == "y"
             if force:
                 cmd = ["git", "branch", "-D", t_branch]
                 self._base.run_command(cmd)
